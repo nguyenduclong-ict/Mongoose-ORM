@@ -1,0 +1,44 @@
+{
+  "name": "mongo-orm",
+  "version": "0.0.1",
+  "description": "ORM, Repository, Hook for mongodb",
+  "main": "dist/index.js",
+  "author": "Nguyen Duc Long",
+  "license": "MIT",
+  "private": false,
+  "bin": {
+    "mongo-orm": "cli/index.js"
+  },
+  "keywords": [
+    "mongodb",
+    "mongoose",
+    "hook",
+    "repository",
+    "orm",
+    "validate",
+    "entity",
+    "cascade"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:nguyenduclong-ict/mongo-orm.git"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.prod.json",
+    "test": "ts-node src/test/index.test.ts"
+  },
+  "devDependencies": {
+    "commander": "^6.2.1",
+    "ejs": "^3.1.5",
+    "reflect-metadata": "^0.1.13",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.166",
+    "@types/mongoose": "^5.10.3",
+    "async-validator": "^3.5.1",
+    "lodash": "^4.17.20",
+    "mongoose": "^5.11.9"
+  }
+}
