@@ -1,14 +1,14 @@
 ```bash
-npm i --save mongo-orm
+npm i --save mongoose-orm
 ```
 
 ```bash
-# CLI mongo-orm
-npm i -g mongo-orm
-mongo-orm --help
+# CLI mongoose-orm
+npm i -g mongoose-orm
+mongoose-orm --help
 
 # create entity
-mongo-orm entity entities User
+mongoose-orm entity entities User
 
 # => generate
 src/services/entities/User.schema.ts
@@ -19,7 +19,7 @@ src/services/entities/User.repository.ts
 
 ```typescript
 # connection.ts
-import { createConnection } from "mongo-orm";
+import { createConnection } from "mongoose-orm";
 
 export const connection = createConnection({
   dbName: "demo",
@@ -39,7 +39,7 @@ import {
   Field,
   Entity,
   Inject,
-} from "mongo-orm";
+} from "mongoose-orm";
 import { connection } from "./connection";
 
 @Entity({ timestamps: true }) // Pass schema option here

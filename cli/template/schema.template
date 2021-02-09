@@ -1,4 +1,4 @@
-import { Entity, Field, createSchema } from "mongo-orm";
+import { Entity, Field, createSchema } from "mongoose-orm";
 import { Document } from "mongoose";
 
 @Entity<<%= name %>>({})

@@ -1,13 +1,13 @@
 {
-  "name": "mongo-orm",
+  "name": "mongoose-orm",
   "version": "0.0.1",
-  "description": "ORM, Repository, Hook for mongodb",
+  "description": "Mongoose ORM, Repository, Hook, Cascade",
   "main": "dist/index.js",
   "author": "Nguyen Duc Long",
   "license": "MIT",
   "private": false,
   "bin": {
-    "mongo-orm": "cli/index.js"
+    "mongoose-orm": "cli/index.js"
   },
   "keywords": [
     "mongodb",
@@ -17,11 +17,12 @@
     "orm",
     "validate",
     "entity",
-    "cascade"
+    "cascade",
+    "crud"
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:nguyenduclong-ict/mongo-orm.git"
+    "url": "git@github.com:nguyenduclong-ict/mongoose-orm.git"
   },
   "scripts": {
     "build": "tsc --project tsconfig.prod.json",
