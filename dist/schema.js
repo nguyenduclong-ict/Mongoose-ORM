@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createSchema = exports.DeleteDateField = exports.Field = exports.Entity = void 0;
+exports.getSchemaValidation = exports.createSchema = exports.DeleteDateField = exports.Field = exports.Entity = void 0;
 const lodash_1 = __importDefault(require("lodash"));
 const mongoose_1 = require("mongoose");
 require("reflect-metadata");
@@ -148,3 +148,4 @@ function getSchemaValidation(classDefination) {
     });
     return validateSchema;
 }
+exports.getSchemaValidation = getSchemaValidation;

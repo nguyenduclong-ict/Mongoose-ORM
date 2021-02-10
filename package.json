@@ -1,6 +1,6 @@
 {
   "name": "mongoose-orm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Mongoose ORM, Repository, Hook, Cascade",
   "main": "dist/index.js",
   "author": "Nguyen Duc Long",

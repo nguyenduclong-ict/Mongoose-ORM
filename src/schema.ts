@@ -131,7 +131,7 @@ export function createSchema(classDefination: any) {
   return schema;
 }
 
-function getSchemaValidation(classDefination: any) {
+export function getSchemaValidation(classDefination: any) {
   const validateSchema: Rules = {};
   const fields: any = Reflect.getMetadata(KEYS.SCHEMA_PATHS, classDefination);
   Object.keys(fields).forEach((path) => {
