@@ -26,6 +26,7 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.prod.json",
+    "merge": "git checkout develop -- dist package.json package-lock.json",
     "test": "ts-node src/test/index.test.ts"
   },
   "devDependencies": {
