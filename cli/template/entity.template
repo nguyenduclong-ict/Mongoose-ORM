@@ -1,5 +1,13 @@
+import { Entity, Field, createSchema,Inject, Repository } from "mongoose-orm";
+import { Document } from "mongoose";
 import { Connections } from "@Constants/connections";
-import { Inject, Repository } from "mongoose-orm";
+
+@Entity<<%= name %>>({})
+export class <%= name %> extends Document {
+}
+
+export const <%= name %>Schema = createSchema<<%=name%>>(<%= name %>);
+
 import { <%= name %>, <%= name %>Schema } from "./<%= name %>.schema";
 
 @Inject({ connection: Connections.default, schema: <%= name %>Schema })
