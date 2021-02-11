@@ -200,7 +200,7 @@ export class Repository<E = any> {
     ]);
 
     return {
-      data,
+      data: (data as unknown) as E[],
       page: ctx.page,
       totalPages: Math.ceil(counts / (ctx.limit || 10)),
       pageSize: ctx.pageSize,
@@ -209,7 +209,7 @@ export class Repository<E = any> {
   }
 
   @Action
-  async find(ctx: Context<E>) {
+  async find(ctx: Context<E>): Promise<E[]> {
     this.buildQuery(ctx);
     const queryBuilder = this.model.find(
       ctx.query,
@@ -219,11 +219,11 @@ export class Repository<E = any> {
     if (ctx.populates) {
       this.populate(queryBuilder, ctx.populates);
     }
-    return queryBuilder.exec();
+    return queryBuilder.exec() as any;
   }
 
   @Action
-  findOne(ctx: Context<E>) {
+  findOne(ctx: Context<E>): Promise<E> {
     this.buildQuery(ctx);
     const queryBuilder = this.model.findOne(
       ctx.query,
@@ -233,11 +233,11 @@ export class Repository<E = any> {
     if (ctx.populates) {
       this.populate(queryBuilder, ctx.populates);
     }
-    return queryBuilder.exec();
+    return queryBuilder.exec() as any;
   }
 
   @Action
-  async create(ctx: ContextCreate<E>): Promise<Document<E>> {
+  async create(ctx: ContextCreate<E>): Promise<E> {
     await this.cascadeCreate(ctx);
     return this.model.create(ctx.data as any).then((doc: any) => {
       if (ctx.populates?.length) {
@@ -259,7 +259,7 @@ export class Repository<E = any> {
   }
 
   @Action
-  async update(ctx: ContextUpdate<E>) {
+  async update(ctx: ContextUpdate<E>): Promise<E[]> {
     this.buildQuery(ctx);
     await this.cascadeUpdate(ctx);
     if (ctx.new) {
@@ -273,7 +273,7 @@ export class Repository<E = any> {
             } as any,
           })
         )
-      );
+      ) as any;
     } else {
       return this.model.updateMany(
         ctx.query as any,
@@ -284,7 +284,7 @@ export class Repository<E = any> {
   }
 
   @Action
-  async updateOne(ctx: ContextUpdate<E>) {
+  async updateOne(ctx: ContextUpdate<E>): Promise<E> {
     this.buildQuery(ctx);
     await this.cascadeUpdate(ctx);
     return this.populate(
@@ -298,7 +298,7 @@ export class Repository<E = any> {
   }
 
   @Action
-  async delete(ctx: Context<E>) {
+  async delete(ctx: Context<E>): Promise<any> {
     ctx.softDelete = false;
     this.buildQuery(ctx);
     const entites = await this.model.find(ctx.query);
@@ -317,7 +317,7 @@ export class Repository<E = any> {
   }
 
   @Action
-  softDelete(ctx: Context<E>) {
+  softDelete(ctx: Context<E>): Promise<any> {
     const update: any = {
       $currentDate: {},
     };
@@ -330,7 +330,7 @@ export class Repository<E = any> {
   }
 
   @Action
-  restoreSoftDelete(ctx: Context<E>) {
+  restoreSoftDelete(ctx: Context<E>): Promise<any> {
     const update: any = {};
     this.model.schema.eachPath((path, type: any) => {
       if (type.options.columnType === "deleteDate") {
