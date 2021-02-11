@@ -49,18 +49,18 @@ export declare class Repository<E = any> {
     constructor(connection?: any);
     makeDefaultContext(ctx: Context<E>): void;
     list(ctx: Context<E>): Promise<{
-        data: Document<E>[];
+        data: E[];
         page: number;
         totalPages: number;
         pageSize: number;
         total: number;
     }>;
-    find(ctx: Context<E>): Promise<Document<E>[]>;
-    findOne(ctx: Context<E>): Promise<Document<E>>;
-    create(ctx: ContextCreate<E>): Promise<Document<E>>;
+    find(ctx: Context<E>): Promise<E[]>;
+    findOne(ctx: Context<E>): Promise<E>;
+    create(ctx: ContextCreate<E>): Promise<E>;
     createMany(ctx: ContextCreateMany<E>): Promise<E[]>;
-    update(ctx: ContextUpdate<E>): Promise<any>;
-    updateOne(ctx: ContextUpdate<E>): Promise<any>;
+    update(ctx: ContextUpdate<E>): Promise<E[]>;
+    updateOne(ctx: ContextUpdate<E>): Promise<E>;
     delete(ctx: Context<E>): Promise<any>;
     softDelete(ctx: Context<E>): Promise<any>;
     restoreSoftDelete(ctx: Context<E>): Promise<any>;

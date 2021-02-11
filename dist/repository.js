@@ -139,7 +139,7 @@ class Repository {
             this.model.countDocuments(ctx.query),
         ]);
         return {
-            data,
+            data: data,
             page: ctx.page,
             totalPages: Math.ceil(counts / (ctx.limit || 10)),
             pageSize: ctx.pageSize,
