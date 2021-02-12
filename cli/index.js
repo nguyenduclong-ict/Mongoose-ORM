@@ -20,16 +20,9 @@ async function createEntity(entityPath, entityName) {
   fs.mkdirSync(entityPath, { recursive: true });
 
   fs.writeFileSync(
-    path.join(entityPath, `${entityName}.schema.ts`),
-    await ejs.renderFile(path.join(__dirname, "./template/schema.template"), {
+    path.join(entityPath, `${entityName}.ts`),
+    await ejs.renderFile(path.join(__dirname, "./template/entity.template"), {
       name: entityName,
     })
-  );
-  fs.writeFileSync(
-    path.join(entityPath, `${entityName}.repository.ts`),
-    await ejs.renderFile(
-      path.join(__dirname, "./template/repository.template"),
-      { name: entityName }
-    )
   );
 }
