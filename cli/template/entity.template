@@ -6,9 +6,7 @@ import { Connections } from "@Constants/connections";
 export class <%= name %> extends Document {
 }
 
-export const <%= name %>Schema = createSchema<<%=name%>>(<%= name %>);
-
-import { <%= name %>, <%= name %>Schema } from "./<%= name %>.schema";
+export const <%= name %>Schema = createSchema(<%= name %>);
 
 @Inject({ connection: Connections.default, schema: <%= name %>Schema })
 export class <%= name %>Repository extends Repository<<%= name %>> {}
