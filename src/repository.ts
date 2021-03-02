@@ -243,7 +243,7 @@ export class Repository<E = any> {
       if (ctx.populates?.length) {
         return this.populate(this.model.findById(doc.id), ctx.populates).exec();
       }
-      return doc[0];
+      return doc;
     });
   }
 
@@ -255,7 +255,20 @@ export class Repository<E = any> {
       cascadeTasks.push(this.cascadeCreate({ ...ctx, data: item }));
     });
     await Promise.all(cascadeTasks);
-    return this.model.create(ctx.data as any, options) as any;
+    return (this.model.create(ctx.data as any, options) as any).then(
+      (docs: E[]) =>
+        Promise.all(
+          docs.map((doc) => {
+            if (ctx.populates?.length) {
+              return this.populate(
+                this.model.findById(getObjectId(doc)),
+                ctx.populates
+              ).exec();
+            }
+            return doc;
+          })
+        )
+    );
   }
 
   @Action
