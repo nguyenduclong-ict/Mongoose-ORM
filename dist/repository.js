@@ -168,7 +168,7 @@ class Repository {
             if (ctx.populates?.length) {
                 return this.populate(this.model.findById(doc.id), ctx.populates).exec();
             }
-            return doc[0];
+            return doc;
         });
     }
     async createMany(ctx) {
@@ -178,7 +178,12 @@ class Repository {
             cascadeTasks.push(this.cascadeCreate({ ...ctx, data: item }));
         });
         await Promise.all(cascadeTasks);
-        return this.model.create(ctx.data, options);
+        return this.model.create(ctx.data, options).then((docs) => Promise.all(docs.map((doc) => {
+            if (ctx.populates?.length) {
+                return this.populate(this.model.findById(utils_1.getObjectId(doc)), ctx.populates).exec();
+            }
+            return doc;
+        })));
     }
     async update(ctx) {
         this.buildQuery(ctx);
