@@ -225,9 +225,9 @@ var Repository = /** @class */ (function () {
                         _a = _b.sent(), data = _a[0], counts = _a[1];
                         return [2 /*return*/, {
                                 data: data,
-                                page: ctx.page,
+                                page: Math.ceil(ctx.skip / ctx.limit),
                                 totalPages: Math.ceil(counts / (ctx.limit || 10)),
-                                pageSize: ctx.pageSize,
+                                pageSize: ctx.limit,
                                 total: counts,
                             }];
                 }
@@ -647,8 +647,21 @@ var Repository = /** @class */ (function () {
             });
         });
     };
-    Repository.prototype.validateEntity = function (data) {
+    Repository.prototype.validateEntity = function (data, options) {
         var descriptor = lodash_1.default.get(this.model.schema, constants_1.KEYS.SCHEMA_VALIDATOR);
+        if (options === null || options === void 0 ? void 0 : options.makeAllOptional) {
+            descriptor = __assign({}, descriptor);
+            Object.values(descriptor).forEach(function (rule) {
+                if (Array.isArray(rule)) {
+                    rule.forEach(function (sr) {
+                        sr.required = false;
+                    });
+                }
+                else {
+                    rule.required = false;
+                }
+            });
+        }
         var validateSchema = new async_validator_1.default(descriptor);
         return new Promise(function (resolve) {
             validateSchema.validate(data, {}, function (errors, fields) {

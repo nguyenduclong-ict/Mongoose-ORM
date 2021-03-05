@@ -201,9 +201,9 @@ export class Repository<E = any> {
 
     return {
       data: (data as unknown) as E[],
-      page: ctx.page,
+      page: Math.ceil(ctx.skip / ctx.limit),
       totalPages: Math.ceil(counts / (ctx.limit || 10)),
-      pageSize: ctx.pageSize,
+      pageSize: ctx.limit,
       total: counts,
     };
   }
@@ -555,8 +555,20 @@ export class Repository<E = any> {
     return data;
   }
 
-  validateEntity(data: Partial<E>) {
-    const descriptor: Rules = _.get(this.model.schema, KEYS.SCHEMA_VALIDATOR);
+  validateEntity(data: Partial<E>, options?: { makeAllOptional?: boolean }) {
+    let descriptor: Rules = _.get(this.model.schema, KEYS.SCHEMA_VALIDATOR);
+    if (options?.makeAllOptional) {
+      descriptor = { ...descriptor };
+      Object.values(descriptor).forEach((rule) => {
+        if (Array.isArray(rule)) {
+          rule.forEach((sr) => {
+            sr.required = false;
+          });
+        } else {
+          rule.required = false;
+        }
+      });
+    }
     const validateSchema = new ValidateSchema(descriptor);
     return new Promise<{
       valid: boolean;

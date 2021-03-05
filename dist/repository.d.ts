@@ -70,7 +70,9 @@ export declare class Repository<E = any> {
     protected cascadeCreate(ctx: ContextUpdate): Promise<UpdateQuery<any>>;
     protected cascadeUpdate(ctx: ContextUpdate): Promise<UpdateQuery<any>>;
     protected cascadeDelete(entity: any, ctx: ContextCreate): Promise<any>;
-    validateEntity(data: Partial<E>): Promise<{
+    validateEntity(data: Partial<E>, options?: {
+        makeAllOptional?: boolean;
+    }): Promise<{
         valid: boolean;
         errors?: {
             message: string;

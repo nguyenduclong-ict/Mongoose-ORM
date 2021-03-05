@@ -67,8 +67,7 @@ export function Entity<E>(options?: EntityOptions<E>) {
 export function Field(config?: FieldType) {
   return function (target: any, key: string) {
     if (!Array.isArray(config)) {
-      config = config || {};
-      config = { type: SchemaTypes.String, ...config } as any;
+      config = { type: SchemaTypes.String, ...(config || {}) } as any;
     }
     let fields: any;
     if (
@@ -96,7 +95,7 @@ export function createSchema(classDefination: any) {
   const fields: any = Reflect.getMetadata(KEYS.SCHEMA_PATHS, classDefination);
   const options: EntityOptions =
     Reflect.getMetadata(KEYS.SCHEMA_OPTIONS, classDefination) || {};
-  const schema = new Schema<typeof classDefination>(fields);
+  const schema = new Schema<typeof classDefination>(fields, options);
 
   if (options?.virtualId) {
     schema.set("toJSON", {
