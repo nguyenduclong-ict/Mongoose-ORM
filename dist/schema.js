@@ -1,22 +1,29 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSchemaValidation = exports.createSchema = exports.DeleteDateField = exports.Field = exports.Entity = void 0;
-const lodash_1 = __importDefault(require("lodash"));
-const mongoose_1 = require("mongoose");
+var lodash_1 = __importDefault(require("lodash"));
+var mongoose_1 = require("mongoose");
 require("reflect-metadata");
-const constants_1 = require("./constants");
+var constants_1 = require("./constants");
 /**************** DECORATOR ****************/
 function Entity(options) {
     return function (target) {
         options = options || {};
-        options = {
-            virtualId: true,
-            autoIndex: true,
-            ...options,
-        };
+        options = __assign({ virtualId: true, autoIndex: true }, options);
         Reflect.defineMetadata(constants_1.KEYS.SCHEMA_OPTIONS, options, target);
     };
 }
@@ -25,9 +32,9 @@ function Field(config) {
     return function (target, key) {
         if (!Array.isArray(config)) {
             config = config || {};
-            config = { type: mongoose_1.SchemaTypes.String, ...config };
+            config = __assign({ type: mongoose_1.SchemaTypes.String }, config);
         }
-        let fields;
+        var fields;
         if (!(fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, target.constructor))) {
             fields = {};
             Reflect.defineMetadata(constants_1.KEYS.SCHEMA_PATHS, fields, target.constructor);
@@ -47,13 +54,13 @@ function DeleteDateField(config) {
 }
 exports.DeleteDateField = DeleteDateField;
 function createSchema(classDefination) {
-    const fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, classDefination);
-    const options = Reflect.getMetadata(constants_1.KEYS.SCHEMA_OPTIONS, classDefination) || {};
-    const schema = new mongoose_1.Schema(fields);
-    if (options?.virtualId) {
+    var fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, classDefination);
+    var options = Reflect.getMetadata(constants_1.KEYS.SCHEMA_OPTIONS, classDefination) || {};
+    var schema = new mongoose_1.Schema(fields);
+    if (options === null || options === void 0 ? void 0 : options.virtualId) {
         schema.set("toJSON", {
             virtuals: true,
-            transform: (doc, converted) => {
+            transform: function (doc, converted) {
                 converted.id = doc._id;
                 delete converted.__v;
                 delete converted._id;
@@ -61,7 +68,7 @@ function createSchema(classDefination) {
         });
         schema.set("toObject", {
             virtuals: true,
-            transform: (doc, converted) => {
+            transform: function (doc, converted) {
                 converted.id = doc._id;
                 delete converted.__v;
                 delete converted._id;
@@ -69,7 +76,7 @@ function createSchema(classDefination) {
         });
     }
     if (options.indexes) {
-        options.indexes.forEach((indexSetting) => {
+        options.indexes.forEach(function (indexSetting) {
             schema.index(indexSetting.fields, indexSetting.options);
         });
     }
@@ -80,58 +87,58 @@ function createSchema(classDefination) {
 }
 exports.createSchema = createSchema;
 function getSchemaValidation(classDefination) {
-    const validateSchema = {};
-    const fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, classDefination);
-    Object.keys(fields).forEach((path) => {
-        let fieldOption = fields[path];
-        const isArray = Array.isArray(fieldOption);
+    var validateSchema = {};
+    var fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, classDefination);
+    Object.keys(fields).forEach(function (path) {
+        var fieldOption = fields[path];
+        var isArray = Array.isArray(fieldOption);
         if (isArray)
             fieldOption = fieldOption[0];
         if (fieldOption.validator) {
             validateSchema[path] = fieldOption.validator;
         }
         else {
-            const rule = {};
-            rule.required = fieldOption.required;
+            var rule_1 = {};
+            rule_1.required = fieldOption.required;
             // Type
             if (fieldOption.type === mongoose_1.SchemaTypes.String ||
                 fieldOption.type === String) {
-                rule.type = "string";
+                rule_1.type = "string";
                 if (lodash_1.default.has(fieldOption, "length"))
-                    rule.len = fieldOption.length;
+                    rule_1.len = fieldOption.length;
                 if (lodash_1.default.has(fieldOption, "minlength"))
-                    rule.min = fieldOption.minlength;
+                    rule_1.min = fieldOption.minlength;
                 if (lodash_1.default.has(fieldOption, "maxlength"))
-                    rule.max = fieldOption.maxlength;
+                    rule_1.max = fieldOption.maxlength;
             }
             else if (isArray ||
                 fieldOption.type === mongoose_1.SchemaTypes.Array ||
                 fieldOption.type === Array ||
                 Array.isArray(fieldOption.type)) {
-                rule.type = "array";
+                rule_1.type = "array";
                 if (lodash_1.default.has(fieldOption, "length"))
-                    rule.len = fieldOption.length;
+                    rule_1.len = fieldOption.length;
                 if (lodash_1.default.has(fieldOption, "minlength"))
-                    rule.min = fieldOption.minlength;
+                    rule_1.min = fieldOption.minlength;
                 if (lodash_1.default.has(fieldOption, "maxlength"))
-                    rule.max = fieldOption.maxlength;
+                    rule_1.max = fieldOption.maxlength;
             }
             else if (fieldOption.type === mongoose_1.SchemaTypes.Number ||
                 fieldOption.type === Number) {
-                rule.type = "number";
+                rule_1.type = "number";
                 if (lodash_1.default.has(fieldOption, "max"))
-                    rule.max = fieldOption.max;
+                    rule_1.max = fieldOption.max;
                 if (lodash_1.default.has(fieldOption, "min"))
-                    rule.min = fieldOption.min;
+                    rule_1.min = fieldOption.min;
             }
             else if (fieldOption.type === mongoose_1.SchemaTypes.Boolean ||
                 fieldOption.type === Boolean) {
-                rule.type = "boolean";
+                rule_1.type = "boolean";
             }
             else if (fieldOption.type === mongoose_1.SchemaTypes.ObjectId) {
-                rule.type = "any";
-                rule.validator = (r, v, cb) => {
-                    if (rule.required && !v) {
+                rule_1.type = "any";
+                rule_1.validator = function (r, v, cb) {
+                    if (rule_1.required && !v) {
                         return cb(r.fullField + " must be ObjectId");
                     }
                     if (!mongoose_1.isValidObjectId(v))
@@ -140,9 +147,9 @@ function getSchemaValidation(classDefination) {
                 };
             }
             if (lodash_1.default.has(fieldOption, "enum"))
-                rule.enum = fieldOption.enum;
-            if (rule.type) {
-                validateSchema[path] = rule;
+                rule_1.enum = fieldOption.enum;
+            if (rule_1.type) {
+                validateSchema[path] = rule_1;
             }
         }
     });
