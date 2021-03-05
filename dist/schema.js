@@ -31,8 +31,7 @@ exports.Entity = Entity;
 function Field(config) {
     return function (target, key) {
         if (!Array.isArray(config)) {
-            config = config || {};
-            config = __assign({ type: mongoose_1.SchemaTypes.String }, config);
+            config = __assign({ type: mongoose_1.SchemaTypes.String }, (config || {}));
         }
         var fields;
         if (!(fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, target.constructor))) {
@@ -56,7 +55,7 @@ exports.DeleteDateField = DeleteDateField;
 function createSchema(classDefination) {
     var fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, classDefination);
     var options = Reflect.getMetadata(constants_1.KEYS.SCHEMA_OPTIONS, classDefination) || {};
-    var schema = new mongoose_1.Schema(fields);
+    var schema = new mongoose_1.Schema(fields, options);
     if (options === null || options === void 0 ? void 0 : options.virtualId) {
         schema.set("toJSON", {
             virtuals: true,
