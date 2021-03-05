@@ -15,9 +15,7 @@ src/services/entities/User.schema.ts
 src/services/entities/User.repository.ts
 ```
 
-## Simple example crud project with express
-
-[mongoose-orm-crud](<[https://link](https://github.com/nguyenduclong-ict/mongoose-orm-crud)>)
+> Simple example crud project with express: [mongoose-orm-crud](https://github.com/nguyenduclong-ict/mongoose-orm-crud)
 
 ## Create mongoose connection
 
