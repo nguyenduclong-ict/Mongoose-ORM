@@ -31,6 +31,15 @@ export const connection = createConnection({
 });
 ```
 
+## Global hook
+
+```typescript
+// Register global hook to add `createdBy` to before all action create
+Repository.registerHook("before", ["create"], function (ctx: ContextCreate) {
+  if (options.owner) ctx.data.createdBy = ctx.meta?.user?.id;
+});
+```
+
 ## Create Entity
 
 ```typescript

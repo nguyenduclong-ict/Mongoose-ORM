@@ -81,7 +81,7 @@ function Action(target, key, descriptor) {
             args[_i - 1] = arguments[_i];
         }
         return __awaiter(this, void 0, void 0, function () {
-            var result, cache, beforeHooks, afterHooks, hooks, listParents, _a, beforeHooks_1, methodName, _b, afterHooks_1, methodName;
+            var result, cache, beforeHooks, afterHooks, hooks, listParents, _a, beforeHooks_1, method, _b, afterHooks_1, method;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
@@ -122,8 +122,9 @@ function Action(target, key, descriptor) {
                         }
                         // Call before hooks
                         for (_a = 0, beforeHooks_1 = beforeHooks; _a < beforeHooks_1.length; _a++) {
-                            methodName = beforeHooks_1[_a];
-                            this[methodName].call(this, context);
+                            method = beforeHooks_1[_a];
+                            method = typeof method === "string" ? this[method] : method;
+                            method.call(this, context);
                         }
                         return [4 /*yield*/, originalMethod.call.apply(originalMethod, __spreadArrays([this, context], args))];
                     case 1:
@@ -133,8 +134,9 @@ function Action(target, key, descriptor) {
                         _c.label = 2;
                     case 2:
                         if (!(_b < afterHooks_1.length)) return [3 /*break*/, 5];
-                        methodName = afterHooks_1[_b];
-                        return [4 /*yield*/, this[methodName].call(this, context, result)];
+                        method = afterHooks_1[_b];
+                        method = typeof method === "string" ? this[method] : method;
+                        return [4 /*yield*/, method.call(this, context, result)];
                     case 3:
                         result = _c.sent();
                         _c.label = 4;
@@ -187,14 +189,42 @@ exports.getRepository = getRepository;
 var Repository = /** @class */ (function () {
     function Repository(connection) {
         this.connection = connection || this.connection;
-        if (!this.name) {
-            this.name = this.constructor.name.replace(/Repository$/, "");
+        if (this.connection) {
+            if (!this.name) {
+                this.name = this.constructor.name.replace(/Repository$/, "");
+            }
+            this.model =
+                this.connection.models[this.name] ||
+                    this.connection.model(this.name, this.schema);
+            resgisterRepository(this);
         }
-        this.model =
-            this.connection.models[this.name] ||
-                this.connection.model(this.name, this.schema);
-        resgisterRepository(this);
     }
+    Object.defineProperty(Repository, "globalInstance", {
+        get: function () {
+            if (!this._globalInstance)
+                this._globalInstance = new Repository();
+            return this._globalInstance;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Repository.registerHook = function (trigger, actions, handler) {
+        var hooks;
+        var target = this.globalInstance;
+        if (!(hooks = Reflect.getMetadata(constants_1.KEYS.REPOSITORY_HOOKS, target))) {
+            hooks = {};
+            Reflect.defineMetadata(constants_1.KEYS.REPOSITORY_HOOKS, hooks, target);
+        }
+        actions.forEach(function (actionName) {
+            hooks[target.constructor.name] = hooks[target.constructor.name] || {
+                before: {},
+                after: {},
+            };
+            var h = hooks[target.constructor.name];
+            h[trigger][actionName] = h[trigger][actionName] || [];
+            h[trigger][actionName].push(handler);
+        });
+    };
     Repository.prototype.makeDefaultContext = function (ctx) {
         var _a, _b, _c, _d, _e, _f, _g;
         ctx = ctx || {};
