@@ -2,6 +2,7 @@ import {
   isValidObjectId,
   ConnectionOptions,
   createConnection as createMongoConnection,
+  Types,
 } from "mongoose";
 
 export function waterFallPromises(promises: any[]) {
@@ -70,10 +71,11 @@ export function createConnection(
 }
 
 export function getObjectId(value: any): any {
-  if (isValidObjectId(value)) return value;
-  if (isValidObjectId(value?.id)) return value.id;
-  if (isValidObjectId(value?._id)) return value._id;
-  return false;
+  if (typeof value === "string" && isValidObjectId(value)) return value;
+  if (value instanceof Types.ObjectId) return value;
+  if (value?._id && isValidObjectId(value?._id)) return value._id;
+  if (value?.id && isValidObjectId(value?.id)) return value.id;
+  return value;
 }
 
 export function Inject<T = any>(options?: Partial<T>) {

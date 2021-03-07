@@ -309,15 +309,17 @@ export class Repository<E = any> {
     await this.cascadeUpdate(ctx);
     if (ctx.new) {
       return this.model.find(ctx.query as any, "id").then((docs) =>
-        this.model.updateMany(ctx.query as any, ctx.data as any).then(() =>
-          this.find({
+        this.model.updateMany(ctx.query as any, ctx.data as any).then(() => {
+          return this.find({
             ...ctx,
             limit: Number.MAX_SAFE_INTEGER,
             query: {
-              id: docs.map(getObjectId),
+              id: {
+                $in: docs.map(getObjectId),
+              },
             } as any,
-          })
-        )
+          });
+        })
       ) as any;
     } else {
       return this.model.updateMany(
@@ -339,7 +341,7 @@ export class Repository<E = any> {
         _.pick(ctx, ["projecton", "session", "new"])
       ),
       ctx.populates
-    );
+    ).exec();
   }
 
   @Action
@@ -507,7 +509,11 @@ export class Repository<E = any> {
 
     this.schema.eachPath((path, type: any) => {
       let fieldValue: any;
-      if (type.instance === "ObjectID" && (fieldValue = _.get(data, path))) {
+      if (
+        type.instance === "ObjectID" &&
+        _.has(data, path) &&
+        (fieldValue = _.get(data, path))
+      ) {
         if (
           type.options?.cascade === true ||
           type.options?.cascade?.update === true

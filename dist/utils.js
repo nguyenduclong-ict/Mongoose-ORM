@@ -45,13 +45,15 @@ function createConnection(uri, options) {
 }
 exports.createConnection = createConnection;
 function getObjectId(value) {
-    if (mongoose_1.isValidObjectId(value))
+    if (typeof value === "string" && mongoose_1.isValidObjectId(value))
         return value;
-    if (mongoose_1.isValidObjectId(value === null || value === void 0 ? void 0 : value.id))
-        return value.id;
-    if (mongoose_1.isValidObjectId(value === null || value === void 0 ? void 0 : value._id))
+    if (value instanceof mongoose_1.Types.ObjectId)
+        return value;
+    if ((value === null || value === void 0 ? void 0 : value._id) && mongoose_1.isValidObjectId(value === null || value === void 0 ? void 0 : value._id))
         return value._id;
-    return false;
+    if ((value === null || value === void 0 ? void 0 : value.id) && mongoose_1.isValidObjectId(value === null || value === void 0 ? void 0 : value.id))
+        return value.id;
+    return value;
 }
 exports.getObjectId = getObjectId;
 function Inject(options) {
