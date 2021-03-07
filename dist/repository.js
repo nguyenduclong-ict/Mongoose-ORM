@@ -347,7 +347,9 @@ var Repository = /** @class */ (function () {
                             return [2 /*return*/, this.model.find(ctx.query, "id").then(function (docs) {
                                     return _this.model.updateMany(ctx.query, ctx.data).then(function () {
                                         return _this.find(__assign(__assign({}, ctx), { limit: Number.MAX_SAFE_INTEGER, query: {
-                                                id: docs.map(utils_1.getObjectId),
+                                                id: {
+                                                    $in: docs.map(utils_1.getObjectId),
+                                                },
                                             } }));
                                     });
                                 })];
@@ -369,7 +371,7 @@ var Repository = /** @class */ (function () {
                         return [4 /*yield*/, this.cascadeUpdate(ctx)];
                     case 1:
                         _a.sent();
-                        return [2 /*return*/, this.populate(this.model.findOneAndUpdate(ctx.query, ctx.data, lodash_1.default.pick(ctx, ["projecton", "session", "new"])), ctx.populates)];
+                        return [2 /*return*/, this.populate(this.model.findOneAndUpdate(ctx.query, ctx.data, lodash_1.default.pick(ctx, ["projecton", "session", "new"])), ctx.populates).exec()];
                 }
             });
         });
@@ -584,7 +586,9 @@ var Repository = /** @class */ (function () {
                         this.schema.eachPath(function (path, type) {
                             var _a, _b, _c, _d;
                             var fieldValue;
-                            if (type.instance === "ObjectID" && (fieldValue = lodash_1.default.get(data, path))) {
+                            if (type.instance === "ObjectID" &&
+                                lodash_1.default.has(data, path) &&
+                                (fieldValue = lodash_1.default.get(data, path))) {
                                 if (((_a = type.options) === null || _a === void 0 ? void 0 : _a.cascade) === true ||
                                     ((_c = (_b = type.options) === null || _b === void 0 ? void 0 : _b.cascade) === null || _c === void 0 ? void 0 : _c.update) === true) {
                                     handleCascade(path, type.options, fieldValue);
