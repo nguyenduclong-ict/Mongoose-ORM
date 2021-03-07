@@ -101,14 +101,16 @@ export function Action(target: any, key: string, descriptor: any) {
       afterHooks = cache.after[key];
     }
     // Call before hooks
-    for (const methodName of beforeHooks) {
-      this[methodName].call(this, context);
+    for (let method of beforeHooks) {
+      method = typeof method === "string" ? this[method] : method;
+      (method as any).call(this, context);
     }
     // Call origin action
     result = await originalMethod.call(this, context, ...args);
     // Call before hooks
-    for (const methodName of afterHooks) {
-      result = await this[methodName].call(this, context, result);
+    for (let method of afterHooks) {
+      method = typeof method === "string" ? this[method] : method;
+      result = await (method as any).call(this, context, result);
     }
     return result;
   };
@@ -155,6 +157,7 @@ export function getRepository(connection: Connection, name: string) {
 }
 
 export class Repository<E = any> {
+  private static _globalInstance: Repository;
   name: string;
   connection: Connection;
   schema: Schema<Document<E>>;
@@ -162,13 +165,42 @@ export class Repository<E = any> {
 
   constructor(connection?: any) {
     this.connection = connection || this.connection;
-    if (!this.name) {
-      this.name = this.constructor.name.replace(/Repository$/, "");
+    if (this.connection) {
+      if (!this.name) {
+        this.name = this.constructor.name.replace(/Repository$/, "");
+      }
+      this.model =
+        this.connection.models[this.name] ||
+        this.connection.model(this.name, this.schema);
+      resgisterRepository(this);
     }
-    this.model =
-      this.connection.models[this.name] ||
-      this.connection.model(this.name, this.schema);
-    resgisterRepository(this);
+  }
+
+  static get globalInstance() {
+    if (!this._globalInstance) this._globalInstance = new Repository();
+    return this._globalInstance;
+  }
+
+  static registerHook(
+    trigger: "before" | "after",
+    actions: string[],
+    handler: (ctx: Context<any, any>) => any
+  ) {
+    let hooks: any;
+    const target = this.globalInstance;
+    if (!(hooks = Reflect.getMetadata(KEYS.REPOSITORY_HOOKS, target))) {
+      hooks = {};
+      Reflect.defineMetadata(KEYS.REPOSITORY_HOOKS, hooks, target);
+    }
+    actions.forEach((actionName) => {
+      hooks[target.constructor.name] = hooks[target.constructor.name] || {
+        before: {},
+        after: {},
+      };
+      const h = hooks[target.constructor.name];
+      h[trigger][actionName] = h[trigger][actionName] || [];
+      h[trigger][actionName].push(handler);
+    });
   }
 
   @Hook("before", ["*"])

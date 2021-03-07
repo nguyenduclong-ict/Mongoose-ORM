@@ -42,11 +42,14 @@ export declare function Hook(trigger: "before" | "after", actions: LiteralUnion<
 export declare function resgisterRepository(repository: Repository, connection?: Connection): void;
 export declare function getRepository(connection: Connection, name: string): Repository<any>;
 export declare class Repository<E = any> {
+    private static _globalInstance;
     name: string;
     connection: Connection;
     schema: Schema<Document<E>>;
     model: Model<Document<E>>;
     constructor(connection?: any);
+    static get globalInstance(): Repository<any>;
+    static registerHook(trigger: "before" | "after", actions: string[], handler: (ctx: Context<any, any>) => any): void;
     makeDefaultContext(ctx: Context<E>): void;
     list(ctx: Context<E>): Promise<{
         data: E[];
