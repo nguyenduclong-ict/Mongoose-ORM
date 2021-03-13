@@ -152,8 +152,13 @@ export function resgisterRepository(
   }
   map[repository.name] = repository;
 }
+
 export function getRepository(connection: Connection, name: string) {
   return repos.get(connection)?.[name];
+}
+
+export function getRepositories(connection: Connection) {
+  return repos.get(connection);
 }
 
 export class Repository<E = any> {
@@ -233,7 +238,7 @@ export class Repository<E = any> {
 
     return {
       data: (data as unknown) as E[],
-      page: Math.ceil(ctx.skip / ctx.limit),
+      page: Math.floor(ctx.skip / ctx.limit) + 1,
       totalPages: Math.ceil(counts / (ctx.limit || 10)),
       pageSize: ctx.limit,
       total: counts,

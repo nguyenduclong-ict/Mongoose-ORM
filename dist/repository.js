@@ -63,7 +63,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Repository = exports.getRepository = exports.resgisterRepository = exports.Hook = exports.Action = void 0;
+exports.Repository = exports.getRepositories = exports.getRepository = exports.resgisterRepository = exports.Hook = exports.Action = void 0;
 var async_validator_1 = __importDefault(require("async-validator"));
 var lodash_1 = __importDefault(require("lodash"));
 var mongoose_1 = require("mongoose");
@@ -186,6 +186,10 @@ function getRepository(connection, name) {
     return (_a = repos.get(connection)) === null || _a === void 0 ? void 0 : _a[name];
 }
 exports.getRepository = getRepository;
+function getRepositories(connection) {
+    return repos.get(connection);
+}
+exports.getRepositories = getRepositories;
 var Repository = /** @class */ (function () {
     function Repository(connection) {
         this.connection = connection || this.connection;
@@ -255,7 +259,7 @@ var Repository = /** @class */ (function () {
                         _a = _b.sent(), data = _a[0], counts = _a[1];
                         return [2 /*return*/, {
                                 data: data,
-                                page: Math.ceil(ctx.skip / ctx.limit),
+                                page: Math.floor(ctx.skip / ctx.limit) + 1,
                                 totalPages: Math.ceil(counts / (ctx.limit || 10)),
                                 pageSize: ctx.limit,
                                 total: counts,

@@ -36,12 +36,16 @@ export interface EntityOptions<E = any> extends SchemaOptions {
   virtualId?: boolean;
   indexes?: IndexSetting<E>[];
   owner?: boolean;
+  name?: string;
+  description?: string;
+  [x: string]: any;
 }
 
 export type FieldType = (SchemaTypeOpts<any> | Schema | SchemaType) & {
   ref?: string;
   slug?: any;
   validator?: RuleItem;
+  subType?: String;
   cascade?:
     | boolean
     | {
