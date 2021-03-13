@@ -41,6 +41,9 @@ export declare function Action(target: any, key: string, descriptor: any): void;
 export declare function Hook(trigger: "before" | "after", actions: LiteralUnion<RespositoryBaseActions>[]): (target: any, key: any) => void;
 export declare function resgisterRepository(repository: Repository, connection?: Connection): void;
 export declare function getRepository(connection: Connection, name: string): Repository<any>;
+export declare function getRepositories(connection: Connection): {
+    [x: string]: Repository<any>;
+};
 export declare class Repository<E = any> {
     private static _globalInstance;
     name: string;
