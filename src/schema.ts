@@ -46,6 +46,8 @@ export type FieldType = (SchemaTypeOpts<any> | Schema | SchemaType) & {
   slug?: any;
   validator?: RuleItem;
   subType?: String;
+  name?: string;
+  description?: string;
   cascade?:
     | boolean
     | {
@@ -53,6 +55,7 @@ export type FieldType = (SchemaTypeOpts<any> | Schema | SchemaType) & {
         update?: boolean;
         delete?: boolean;
       };
+  [x: string]: any;
 };
 
 /**************** DECORATOR ****************/
