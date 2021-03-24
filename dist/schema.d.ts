@@ -35,11 +35,14 @@ export declare type FieldType = (SchemaTypeOpts<any> | Schema | SchemaType) & {
     slug?: any;
     validator?: RuleItem;
     subType?: String;
+    name?: string;
+    description?: string;
     cascade?: boolean | {
         create?: boolean;
         update?: boolean;
         delete?: boolean;
     };
+    [x: string]: any;
 };
 /**************** DECORATOR ****************/
 export declare function Entity<E>(options?: EntityOptions<E>): (target: any) => void;
