@@ -23,7 +23,6 @@ export interface IndexSetting<E> {
     options?: IndexOptions;
 }
 export interface EntityOptions<E = any> extends SchemaOptions {
-    virtualId?: boolean;
     indexes?: IndexSetting<E>[];
     owner?: boolean;
     name?: string;

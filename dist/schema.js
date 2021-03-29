@@ -23,7 +23,7 @@ var constants_1 = require("./constants");
 function Entity(options) {
     return function (target) {
         options = options || {};
-        options = __assign({ virtualId: true, autoIndex: true }, options);
+        options = __assign({ autoIndex: true }, options);
         Reflect.defineMetadata(constants_1.KEYS.SCHEMA_OPTIONS, options, target);
     };
 }
@@ -53,27 +53,20 @@ function DeleteDateField(config) {
 }
 exports.DeleteDateField = DeleteDateField;
 function createSchema(classDefination) {
+    var _a, _b;
     var fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, classDefination);
     var options = Reflect.getMetadata(constants_1.KEYS.SCHEMA_OPTIONS, classDefination) || {};
+    options.id = (_a = options.id) !== null && _a !== void 0 ? _a : true;
+    options.versionKey = (_b = options.versionKey) !== null && _b !== void 0 ? _b : false;
     var schema = new mongoose_1.Schema(fields, options);
-    if (options === null || options === void 0 ? void 0 : options.virtualId) {
-        schema.set("toJSON", {
-            virtuals: true,
-            transform: function (doc, converted) {
-                converted.id = doc._id;
-                delete converted.__v;
+    schema.set("toJSON", {
+        virtuals: true,
+        versionKey: options.versionKey,
+        transform: function (doc, converted) {
+            if (options.id)
                 delete converted._id;
-            },
-        });
-        schema.set("toObject", {
-            virtuals: true,
-            transform: function (doc, converted) {
-                converted.id = doc._id;
-                delete converted.__v;
-                delete converted._id;
-            },
-        });
-    }
+        },
+    });
     if (options.indexes) {
         options.indexes.forEach(function (indexSetting) {
             schema.index(indexSetting.fields, indexSetting.options);
