@@ -33,7 +33,6 @@ export interface IndexSetting<E> {
 }
 
 export interface EntityOptions<E = any> extends SchemaOptions {
-  virtualId?: boolean;
   indexes?: IndexSetting<E>[];
   owner?: boolean;
   name?: string;
@@ -63,7 +62,6 @@ export function Entity<E>(options?: EntityOptions<E>) {
   return function (target: any) {
     options = options || {};
     options = {
-      virtualId: true,
       autoIndex: true,
       ...options,
     };
@@ -102,27 +100,16 @@ export function createSchema(classDefination: any) {
   const fields: any = Reflect.getMetadata(KEYS.SCHEMA_PATHS, classDefination);
   const options: EntityOptions =
     Reflect.getMetadata(KEYS.SCHEMA_OPTIONS, classDefination) || {};
+  options.id = options.id ?? true;
+  options.versionKey = options.versionKey ?? false;
   const schema = new Schema<typeof classDefination>(fields, options);
-
-  if (options?.virtualId) {
-    schema.set("toJSON", {
-      virtuals: true,
-      transform: (doc: any, converted: any) => {
-        converted.id = doc._id;
-        delete converted.__v;
-        delete converted._id;
-      },
-    });
-
-    schema.set("toObject", {
-      virtuals: true,
-      transform: (doc: any, converted: any) => {
-        converted.id = doc._id;
-        delete converted.__v;
-        delete converted._id;
-      },
-    });
-  }
+  schema.set("toJSON", {
+    virtuals: true,
+    versionKey: options.versionKey,
+    transform: (doc: any, converted: any) => {
+      if (options.id) delete converted._id;
+    },
+  });
 
   if (options.indexes) {
     options.indexes.forEach((indexSetting) => {

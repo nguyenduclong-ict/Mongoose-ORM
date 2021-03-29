@@ -103,7 +103,7 @@ export function Action(target: any, key: string, descriptor: any) {
     // Call before hooks
     for (let method of beforeHooks) {
       method = typeof method === "string" ? this[method] : method;
-      (method as any).call(this, context);
+      await (method as any).call(this, context);
     }
     // Call origin action
     result = await originalMethod.call(this, context, ...args);
