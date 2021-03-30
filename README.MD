@@ -15,6 +15,8 @@ src/services/entities/User.schema.ts
 src/services/entities/User.repository.ts
 ```
 
+> Simple example crud project with express: [mongoose-orm-crud](https://github.com/nguyenduclong-ict/mongoose-orm-crud)
+
 ## Create mongoose connection
 
 ```typescript
@@ -26,6 +28,15 @@ export const connection = createConnection({
   user: "demo2",
   pass: "123456",
   authSource: "admin",
+});
+```
+
+## Global hook
+
+```typescript
+// Register global hook to add `createdBy` to before all action create
+Repository.registerHook("before", ["create"], function (ctx: ContextCreate) {
+  if (options.owner) ctx.data.createdBy = ctx.meta?.user?.id;
 });
 ```
 
