@@ -443,16 +443,34 @@ export class Repository<E = any> {
     const handleCascade = (path: string, options: any, fieldValue: any) => {
       if (isValidObjectId(fieldValue)) return; // ignore if fieldValue is ObjectId
       // update sub document
-      cascadeTasks.push(async () => {
-        const modelName = await this.getReferenceModel(options, data);
-        if (modelName) {
-          const doc = await getRepository(this.connection, modelName)?.create({
-            ...ctx,
-            data: fieldValue,
-          });
-          _.set(data, path, getObjectId(doc));
-        }
-      });
+      if (!getObjectId(fieldValue)) {
+        cascadeTasks.push(async () => {
+          const modelName = await this.getReferenceModel(options, data);
+          if (modelName) {
+            const doc = await getRepository(this.connection, modelName)?.create(
+              {
+                ...ctx,
+                data: fieldValue,
+              }
+            );
+            _.set(data, path, getObjectId(doc));
+          }
+        });
+      } else {
+        const objectId = getObjectId(fieldValue);
+        cascadeTasks.push(async () => {
+          const modelName = await this.getReferenceModel(options, data);
+          if (modelName) {
+            await getRepository(this.connection, modelName)?.updateOne({
+              ...ctx,
+              new: true,
+              query: { _id: objectId },
+              data: fieldValue,
+            });
+            _.set(data, path, objectId);
+          }
+        });
+      }
     };
 
     this.schema.eachPath((path, type: any) => {
@@ -498,18 +516,34 @@ export class Repository<E = any> {
       if (isValidObjectId(fieldValue)) return; // ignore if fieldValue is ObjectId
       const objectId = getObjectId(fieldValue);
       // update sub document
-      cascadeTasks.push(async () => {
-        const modelName = await this.getReferenceModel(options, data);
-        if (modelName) {
-          await getRepository(this.connection, modelName)?.updateOne({
-            ...ctx,
-            new: true,
-            query: { _id: objectId },
-            data: fieldValue,
-          });
-          _.set(data, path, objectId);
-        }
-      });
+      if (!getObjectId(fieldValue)) {
+        cascadeTasks.push(async () => {
+          const modelName = await this.getReferenceModel(options, data);
+          if (modelName) {
+            const doc = await getRepository(this.connection, modelName)?.create(
+              {
+                ...ctx,
+                data: fieldValue,
+              }
+            );
+            _.set(data, path, getObjectId(doc));
+          }
+        });
+      } else {
+        const objectId = getObjectId(fieldValue);
+        cascadeTasks.push(async () => {
+          const modelName = await this.getReferenceModel(options, data);
+          if (modelName) {
+            await getRepository(this.connection, modelName)?.updateOne({
+              ...ctx,
+              new: true,
+              query: { _id: objectId },
+              data: fieldValue,
+            });
+            _.set(data, path, objectId);
+          }
+        });
+      }
     };
 
     this.schema.eachPath((path, type: any) => {
@@ -574,10 +608,7 @@ export class Repository<E = any> {
     this.schema.eachPath((path, type: any) => {
       let fieldValue: any;
       if (type.instance === "ObjectID" && (fieldValue = _.get(data, path))) {
-        if (
-          type.options.cascade === true ||
-          type.options.cascade?.delete === true
-        ) {
+        if (type.options.cascade?.delete === true) {
           handleCascade(type.options, fieldValue);
         }
       }
@@ -588,7 +619,7 @@ export class Repository<E = any> {
         Array.isArray((fieldValue = _.get(data, path)))
       ) {
         const options = { ...type.options, ...type.caster.options };
-        if (options.cascade === true || options.cascade?.delete === true) {
+        if (options.cascade?.delete === true) {
           fieldValue.forEach((item) => handleCascade(options, item));
         }
       }

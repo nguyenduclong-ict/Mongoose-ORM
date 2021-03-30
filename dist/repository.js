@@ -504,24 +504,47 @@ var Repository = /** @class */ (function () {
                             if (mongoose_1.isValidObjectId(fieldValue))
                                 return; // ignore if fieldValue is ObjectId
                             // update sub document
-                            cascadeTasks.push(function () { return __awaiter(_this, void 0, void 0, function () {
-                                var modelName, doc;
-                                var _a;
-                                return __generator(this, function (_b) {
-                                    switch (_b.label) {
-                                        case 0: return [4 /*yield*/, this.getReferenceModel(options, data)];
-                                        case 1:
-                                            modelName = _b.sent();
-                                            if (!modelName) return [3 /*break*/, 3];
-                                            return [4 /*yield*/, ((_a = getRepository(this.connection, modelName)) === null || _a === void 0 ? void 0 : _a.create(__assign(__assign({}, ctx), { data: fieldValue })))];
-                                        case 2:
-                                            doc = _b.sent();
-                                            lodash_1.default.set(data, path, utils_1.getObjectId(doc));
-                                            _b.label = 3;
-                                        case 3: return [2 /*return*/];
-                                    }
-                                });
-                            }); });
+                            if (!utils_1.getObjectId(fieldValue)) {
+                                cascadeTasks.push(function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var modelName, doc;
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0: return [4 /*yield*/, this.getReferenceModel(options, data)];
+                                            case 1:
+                                                modelName = _b.sent();
+                                                if (!modelName) return [3 /*break*/, 3];
+                                                return [4 /*yield*/, ((_a = getRepository(this.connection, modelName)) === null || _a === void 0 ? void 0 : _a.create(__assign(__assign({}, ctx), { data: fieldValue })))];
+                                            case 2:
+                                                doc = _b.sent();
+                                                lodash_1.default.set(data, path, utils_1.getObjectId(doc));
+                                                _b.label = 3;
+                                            case 3: return [2 /*return*/];
+                                        }
+                                    });
+                                }); });
+                            }
+                            else {
+                                var objectId_1 = utils_1.getObjectId(fieldValue);
+                                cascadeTasks.push(function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var modelName;
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0: return [4 /*yield*/, this.getReferenceModel(options, data)];
+                                            case 1:
+                                                modelName = _b.sent();
+                                                if (!modelName) return [3 /*break*/, 3];
+                                                return [4 /*yield*/, ((_a = getRepository(this.connection, modelName)) === null || _a === void 0 ? void 0 : _a.updateOne(__assign(__assign({}, ctx), { new: true, query: { _id: objectId_1 }, data: fieldValue })))];
+                                            case 2:
+                                                _b.sent();
+                                                lodash_1.default.set(data, path, objectId_1);
+                                                _b.label = 3;
+                                            case 3: return [2 /*return*/];
+                                        }
+                                    });
+                                }); });
+                            }
                         };
                         this.schema.eachPath(function (path, type) {
                             var _a, _b, _c, _d;
@@ -575,24 +598,47 @@ var Repository = /** @class */ (function () {
                                 return; // ignore if fieldValue is ObjectId
                             var objectId = utils_1.getObjectId(fieldValue);
                             // update sub document
-                            cascadeTasks.push(function () { return __awaiter(_this, void 0, void 0, function () {
-                                var modelName;
-                                var _a;
-                                return __generator(this, function (_b) {
-                                    switch (_b.label) {
-                                        case 0: return [4 /*yield*/, this.getReferenceModel(options, data)];
-                                        case 1:
-                                            modelName = _b.sent();
-                                            if (!modelName) return [3 /*break*/, 3];
-                                            return [4 /*yield*/, ((_a = getRepository(this.connection, modelName)) === null || _a === void 0 ? void 0 : _a.updateOne(__assign(__assign({}, ctx), { new: true, query: { _id: objectId }, data: fieldValue })))];
-                                        case 2:
-                                            _b.sent();
-                                            lodash_1.default.set(data, path, objectId);
-                                            _b.label = 3;
-                                        case 3: return [2 /*return*/];
-                                    }
-                                });
-                            }); });
+                            if (!utils_1.getObjectId(fieldValue)) {
+                                cascadeTasks.push(function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var modelName, doc;
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0: return [4 /*yield*/, this.getReferenceModel(options, data)];
+                                            case 1:
+                                                modelName = _b.sent();
+                                                if (!modelName) return [3 /*break*/, 3];
+                                                return [4 /*yield*/, ((_a = getRepository(this.connection, modelName)) === null || _a === void 0 ? void 0 : _a.create(__assign(__assign({}, ctx), { data: fieldValue })))];
+                                            case 2:
+                                                doc = _b.sent();
+                                                lodash_1.default.set(data, path, utils_1.getObjectId(doc));
+                                                _b.label = 3;
+                                            case 3: return [2 /*return*/];
+                                        }
+                                    });
+                                }); });
+                            }
+                            else {
+                                var objectId_2 = utils_1.getObjectId(fieldValue);
+                                cascadeTasks.push(function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var modelName;
+                                    var _a;
+                                    return __generator(this, function (_b) {
+                                        switch (_b.label) {
+                                            case 0: return [4 /*yield*/, this.getReferenceModel(options, data)];
+                                            case 1:
+                                                modelName = _b.sent();
+                                                if (!modelName) return [3 /*break*/, 3];
+                                                return [4 /*yield*/, ((_a = getRepository(this.connection, modelName)) === null || _a === void 0 ? void 0 : _a.updateOne(__assign(__assign({}, ctx), { new: true, query: { _id: objectId_2 }, data: fieldValue })))];
+                                            case 2:
+                                                _b.sent();
+                                                lodash_1.default.set(data, path, objectId_2);
+                                                _b.label = 3;
+                                            case 3: return [2 /*return*/];
+                                        }
+                                    });
+                                }); });
+                            }
                         };
                         this.schema.eachPath(function (path, type) {
                             var _a, _b, _c, _d;
@@ -669,8 +715,7 @@ var Repository = /** @class */ (function () {
                             var _a, _b;
                             var fieldValue;
                             if (type.instance === "ObjectID" && (fieldValue = lodash_1.default.get(data, path))) {
-                                if (type.options.cascade === true ||
-                                    ((_a = type.options.cascade) === null || _a === void 0 ? void 0 : _a.delete) === true) {
+                                if (((_a = type.options.cascade) === null || _a === void 0 ? void 0 : _a.delete) === true) {
                                     handleCascade(type.options, fieldValue);
                                 }
                             }
@@ -679,7 +724,7 @@ var Repository = /** @class */ (function () {
                                 type.caster.instance === "ObjectID" &&
                                 Array.isArray((fieldValue = lodash_1.default.get(data, path)))) {
                                 var options_3 = __assign(__assign({}, type.options), type.caster.options);
-                                if (options_3.cascade === true || ((_b = options_3.cascade) === null || _b === void 0 ? void 0 : _b.delete) === true) {
+                                if (((_b = options_3.cascade) === null || _b === void 0 ? void 0 : _b.delete) === true) {
                                     fieldValue.forEach(function (item) { return handleCascade(options_3, item); });
                                 }
                             }
