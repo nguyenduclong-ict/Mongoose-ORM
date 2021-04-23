@@ -19,7 +19,9 @@ export interface Context<E, M = any> {
     limit?: number;
     page?: number;
     pageSize?: number;
-    sort?: string[];
+    sort?: string | {
+        [x in keyof E]: 1 | -1;
+    };
     new?: boolean;
     projection?: any;
     session?: any;
