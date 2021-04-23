@@ -72,10 +72,10 @@ export function createConnection(
 
 export function getObjectId(value: any): any {
   if (typeof value === "string" && isValidObjectId(value)) return value;
-  if (value instanceof Types.ObjectId) return value;
-  if (value?._id && isValidObjectId(value?._id)) return value._id;
-  if (value?.id && isValidObjectId(value?.id)) return value.id;
-  return value;
+  if (value instanceof Types.ObjectId) return String(value);
+  if (value?._id && isValidObjectId(value?._id)) return String(value._id);
+  if (value?.id && isValidObjectId(value?.id)) return String(value.id);
+  return null;
 }
 
 export function Inject<T = any>(options?: Partial<T>) {

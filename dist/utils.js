@@ -48,12 +48,12 @@ function getObjectId(value) {
     if (typeof value === "string" && mongoose_1.isValidObjectId(value))
         return value;
     if (value instanceof mongoose_1.Types.ObjectId)
-        return value;
+        return String(value);
     if ((value === null || value === void 0 ? void 0 : value._id) && mongoose_1.isValidObjectId(value === null || value === void 0 ? void 0 : value._id))
-        return value._id;
+        return String(value._id);
     if ((value === null || value === void 0 ? void 0 : value.id) && mongoose_1.isValidObjectId(value === null || value === void 0 ? void 0 : value.id))
-        return value.id;
-    return value;
+        return String(value.id);
+    return null;
 }
 exports.getObjectId = getObjectId;
 function Inject(options) {
