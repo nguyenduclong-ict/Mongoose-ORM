@@ -1,44 +1,7 @@
-import { Connection, Document, FilterQuery, Model, Schema, UpdateQuery } from "mongoose";
+/// <reference path="declaration.d.ts" />
+import { Connection, Document, Model, Schema } from "mongoose";
 import "reflect-metadata";
-import { LiteralUnion } from "./types";
-/**************** TYPES ****************/
-export declare type RespositoryBaseActions = "list" | "find" | "findOne" | "create" | "createMany" | "update" | "updateOne" | "delete" | "softDelete" | "restoreSoftDelete";
-export declare type PopulateItem<E = any> = LiteralUnion<keyof E> | {
-    path: LiteralUnion<keyof E>;
-    select?: string;
-    model?: string;
-    populate?: PopulateItem<E>;
-};
-export interface Context<E, M = any> {
-    query?: FilterQuery<E & {
-        id: any;
-        _id: any;
-    }>;
-    populates?: PopulateItem<E>[];
-    skip?: number;
-    limit?: number;
-    page?: number;
-    pageSize?: number;
-    sort?: string | {
-        [x in keyof E]: 1 | -1;
-    };
-    new?: boolean;
-    projection?: any;
-    session?: any;
-    select?: any;
-    meta?: M;
-    softDelete?: boolean;
-}
-export interface ContextCreate<E = any, M = any> extends Context<E, M> {
-    data?: E;
-}
-export interface ContextCreateMany<E = any, M = any> extends Context<E, M> {
-    data?: E[];
-}
-export interface ContextUpdate<E = any, M = any> extends Context<E, M> {
-    data?: UpdateQuery<E>;
-}
-/**************** DECORATOR ****************/
+import { Context, ContextCreate, ContextCreateMany, ContextUpdate, LiteralUnion, PopulateItem, RespositoryBaseActions } from "./declaration";
 export declare function Action(target: any, key: string, descriptor: any): void;
 export declare function Hook(trigger: "before" | "after", actions: LiteralUnion<RespositoryBaseActions>[]): (target: any, key: any) => void;
 export declare function resgisterRepository(repository: Repository, connection?: Connection): void;
@@ -75,8 +38,8 @@ export declare class Repository<E = any> {
     buildQuery(ctx: Context<E>): void;
     populate(query: any, populates?: PopulateItem[]): any;
     getReferenceModel(options: any, data: any): Promise<string>;
-    protected cascadeCreate(ctx: ContextUpdate): Promise<UpdateQuery<any>>;
-    protected cascadeUpdate(ctx: ContextUpdate): Promise<UpdateQuery<any>>;
+    protected cascadeCreate(ctx: ContextUpdate): Promise<import("mongoose").UpdateQuery<any>>;
+    protected cascadeUpdate(ctx: ContextUpdate): Promise<import("mongoose").UpdateQuery<any>>;
     protected cascadeDelete(entity: any, ctx: ContextCreate): Promise<any>;
     validateEntity(data: Partial<E>, options?: {
         makeAllOptional?: boolean;

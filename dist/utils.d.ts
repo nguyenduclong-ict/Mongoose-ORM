@@ -1,4 +1,10 @@
 import { ConnectionOptions } from "mongoose";
+export declare const KEYS: {
+    SCHEMA_PATHS: string;
+    SCHEMA_OPTIONS: string;
+    SCHEMA_VALIDATOR: string;
+    REPOSITORY_HOOKS: string;
+};
 export declare function waterFallPromises(promises: any[]): any;
 interface UriOption {
     host?: string;

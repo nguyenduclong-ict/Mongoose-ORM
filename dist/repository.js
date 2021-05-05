@@ -52,23 +52,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from) {
-    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
-        to[j] = from[i];
-    return to;
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Repository = exports.getRepositories = exports.getRepository = exports.resgisterRepository = exports.Hook = exports.Action = void 0;
+/// <reference path="declaration.ts" />
 var async_validator_1 = __importDefault(require("async-validator"));
 var lodash_1 = __importDefault(require("lodash"));
 var mongoose_1 = require("mongoose");
 require("reflect-metadata");
-var constants_1 = require("./constants");
 var utils_1 = require("./utils");
-/**************** DECORATOR ****************/
 function Action(target, key, descriptor) {
     var caches = new Map();
     var originalMethod = descriptor.value;
@@ -83,7 +84,7 @@ function Action(target, key, descriptor) {
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
-                        hooks = Reflect.getOwnMetadata(constants_1.KEYS.REPOSITORY_HOOKS, target);
+                        hooks = Reflect.getOwnMetadata(utils_1.KEYS.REPOSITORY_HOOKS, target);
                         listParents = utils_1.getParentClasses(this.constructor);
                         if (!(cache = caches.get(this))) {
                             cache = {
@@ -131,7 +132,7 @@ function Action(target, key, descriptor) {
                     case 3:
                         _a++;
                         return [3 /*break*/, 1];
-                    case 4: return [4 /*yield*/, originalMethod.call.apply(originalMethod, __spreadArray([this, context], args))];
+                    case 4: return [4 /*yield*/, originalMethod.call.apply(originalMethod, __spreadArrays([this, context], args))];
                     case 5:
                         // Call origin action
                         result = _c.sent();
@@ -158,9 +159,9 @@ exports.Action = Action;
 function Hook(trigger, actions) {
     return function (target, key) {
         var hooks;
-        if (!(hooks = Reflect.getMetadata(constants_1.KEYS.REPOSITORY_HOOKS, target))) {
+        if (!(hooks = Reflect.getMetadata(utils_1.KEYS.REPOSITORY_HOOKS, target))) {
             hooks = {};
-            Reflect.defineMetadata(constants_1.KEYS.REPOSITORY_HOOKS, hooks, target);
+            Reflect.defineMetadata(utils_1.KEYS.REPOSITORY_HOOKS, hooks, target);
         }
         actions.forEach(function (actionName) {
             hooks[target.constructor.name] = hooks[target.constructor.name] || {
@@ -220,9 +221,9 @@ var Repository = /** @class */ (function () {
     Repository.registerHook = function (trigger, actions, handler) {
         var hooks;
         var target = this.globalInstance;
-        if (!(hooks = Reflect.getMetadata(constants_1.KEYS.REPOSITORY_HOOKS, target))) {
+        if (!(hooks = Reflect.getMetadata(utils_1.KEYS.REPOSITORY_HOOKS, target))) {
             hooks = {};
-            Reflect.defineMetadata(constants_1.KEYS.REPOSITORY_HOOKS, hooks, target);
+            Reflect.defineMetadata(utils_1.KEYS.REPOSITORY_HOOKS, hooks, target);
         }
         actions.forEach(function (actionName) {
             hooks[target.constructor.name] = hooks[target.constructor.name] || {
@@ -736,7 +737,7 @@ var Repository = /** @class */ (function () {
         });
     };
     Repository.prototype.validateEntity = function (data, options) {
-        var descriptor = lodash_1.default.get(this.model.schema, constants_1.KEYS.SCHEMA_VALIDATOR);
+        var descriptor = lodash_1.default.get(this.model.schema, utils_1.KEYS.SCHEMA_VALIDATOR);
         if (options === null || options === void 0 ? void 0 : options.makeAllOptional) {
             descriptor = __assign({}, descriptor);
             Object.values(descriptor).forEach(function (rule) {

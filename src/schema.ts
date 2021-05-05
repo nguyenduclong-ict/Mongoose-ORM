@@ -1,63 +1,10 @@
 import { RuleItem, Rules } from "async-validator";
+import { EntityOptions, FieldType } from "./declaration";
 import _ from "lodash";
-import {
-  isValidObjectId,
-  Schema,
-  SchemaOptions,
-  SchemaType,
-  SchemaTypeOpts,
-  SchemaTypes,
-} from "mongoose";
+import { isValidObjectId, Schema, SchemaTypes } from "mongoose";
 import "reflect-metadata";
-import { KEYS } from "./constants";
-/**************** INTERFACE ****************/
-interface IndexOptions {
-  background?: boolean;
-  expireAfterSeconds?: number;
-  hidden?: boolean;
-  name?: string;
-  partialFilterExpression?: any;
-  sparse?: boolean;
-  storageEngine?: any;
-  unique?: boolean;
-  // text index
-  weights?: number;
-  default_language?: string;
-  language_override?: string;
-  textIndexVersion?: string;
-}
+import { KEYS } from "./utils";
 
-export interface IndexSetting<E> {
-  fields: { [K in keyof E]?: 1 | -1 | "text" };
-  options?: IndexOptions;
-}
-
-export interface EntityOptions<E = any> extends SchemaOptions {
-  indexes?: IndexSetting<E>[];
-  owner?: boolean;
-  name?: string;
-  description?: string;
-  [x: string]: any;
-}
-
-export type FieldType = (SchemaTypeOpts<any> | Schema | SchemaType) & {
-  ref?: string;
-  slug?: any;
-  validator?: RuleItem;
-  subType?: String;
-  name?: string;
-  description?: string;
-  cascade?:
-    | boolean
-    | {
-        create?: boolean;
-        update?: boolean;
-        delete?: boolean;
-      };
-  [x: string]: any;
-};
-
-/**************** DECORATOR ****************/
 export function Entity<E>(options?: EntityOptions<E>) {
   return function (target: any) {
     options = options || {};
@@ -110,7 +57,6 @@ export function createSchema(classDefination: any) {
       if (options.id) delete converted._id;
     },
   });
-
   if (options.indexes) {
     options.indexes.forEach((indexSetting) => {
       schema.index(indexSetting.fields, indexSetting.options);

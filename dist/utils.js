@@ -11,8 +11,14 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getParentClasses = exports.Inject = exports.getObjectId = exports.createConnection = exports.createMongoUri = exports.waterFallPromises = void 0;
+exports.getParentClasses = exports.Inject = exports.getObjectId = exports.createConnection = exports.createMongoUri = exports.waterFallPromises = exports.KEYS = void 0;
 var mongoose_1 = require("mongoose");
+exports.KEYS = {
+    SCHEMA_PATHS: "schema:paths",
+    SCHEMA_OPTIONS: "schema:options",
+    SCHEMA_VALIDATOR: "schema:validator",
+    REPOSITORY_HOOKS: "reposiory:hooks",
+};
 function waterFallPromises(promises) {
     return promises.reduce(function (prev, curr) { return prev.then(function (prevResult) { return curr(prevResult); }); }, Promise.resolve());
 }

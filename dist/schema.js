@@ -18,13 +18,12 @@ exports.getSchemaValidation = exports.createSchema = exports.DeleteDateField = e
 var lodash_1 = __importDefault(require("lodash"));
 var mongoose_1 = require("mongoose");
 require("reflect-metadata");
-var constants_1 = require("./constants");
-/**************** DECORATOR ****************/
+var utils_1 = require("./utils");
 function Entity(options) {
     return function (target) {
         options = options || {};
         options = __assign({ autoIndex: true }, options);
-        Reflect.defineMetadata(constants_1.KEYS.SCHEMA_OPTIONS, options, target);
+        Reflect.defineMetadata(utils_1.KEYS.SCHEMA_OPTIONS, options, target);
     };
 }
 exports.Entity = Entity;
@@ -34,9 +33,9 @@ function Field(config) {
             config = __assign({ type: mongoose_1.SchemaTypes.String }, (config || {}));
         }
         var fields;
-        if (!(fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, target.constructor))) {
+        if (!(fields = Reflect.getMetadata(utils_1.KEYS.SCHEMA_PATHS, target.constructor))) {
             fields = {};
-            Reflect.defineMetadata(constants_1.KEYS.SCHEMA_PATHS, fields, target.constructor);
+            Reflect.defineMetadata(utils_1.KEYS.SCHEMA_PATHS, fields, target.constructor);
         }
         fields[key] = config;
     };
@@ -54,8 +53,8 @@ function DeleteDateField(config) {
 exports.DeleteDateField = DeleteDateField;
 function createSchema(classDefination) {
     var _a, _b;
-    var fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, classDefination);
-    var options = Reflect.getMetadata(constants_1.KEYS.SCHEMA_OPTIONS, classDefination) || {};
+    var fields = Reflect.getMetadata(utils_1.KEYS.SCHEMA_PATHS, classDefination);
+    var options = Reflect.getMetadata(utils_1.KEYS.SCHEMA_OPTIONS, classDefination) || {};
     options.id = (_a = options.id) !== null && _a !== void 0 ? _a : true;
     options.versionKey = (_b = options.versionKey) !== null && _b !== void 0 ? _b : false;
     var schema = new mongoose_1.Schema(fields, options);
@@ -72,15 +71,15 @@ function createSchema(classDefination) {
             schema.index(indexSetting.fields, indexSetting.options);
         });
     }
-    lodash_1.default.set(schema, constants_1.KEYS.SCHEMA_VALIDATOR, getSchemaValidation(classDefination));
-    lodash_1.default.set(schema, constants_1.KEYS.SCHEMA_OPTIONS, options);
-    lodash_1.default.set(schema, constants_1.KEYS.SCHEMA_PATHS, fields);
+    lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_VALIDATOR, getSchemaValidation(classDefination));
+    lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_OPTIONS, options);
+    lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_PATHS, fields);
     return schema;
 }
 exports.createSchema = createSchema;
 function getSchemaValidation(classDefination) {
     var validateSchema = {};
-    var fields = Reflect.getMetadata(constants_1.KEYS.SCHEMA_PATHS, classDefination);
+    var fields = Reflect.getMetadata(utils_1.KEYS.SCHEMA_PATHS, classDefination);
     Object.keys(fields).forEach(function (path) {
         var fieldOption = fields[path];
         var isArray = Array.isArray(fieldOption);

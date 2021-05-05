@@ -1,70 +1,19 @@
+/// <reference path="declaration.ts" />
 import ValidateSchema, { Rules } from "async-validator";
 import _ from "lodash";
-import {
-  Connection,
-  Document,
-  FilterQuery,
-  isValidObjectId,
-  Model,
-  Schema,
-  UpdateQuery,
-} from "mongoose";
+import { Connection, Document, isValidObjectId, Model, Schema } from "mongoose";
 import "reflect-metadata";
-import { KEYS } from "./constants";
-import { LiteralUnion } from "./types";
-import { getObjectId, getParentClasses } from "./utils";
+import {
+  Context,
+  ContextCreate,
+  ContextCreateMany,
+  ContextUpdate,
+  LiteralUnion,
+  PopulateItem,
+  RespositoryBaseActions,
+} from "./declaration";
+import { getObjectId, getParentClasses, KEYS } from "./utils";
 
-/**************** TYPES ****************/
-export type RespositoryBaseActions =
-  | "list"
-  | "find"
-  | "findOne"
-  | "create"
-  | "createMany"
-  | "update"
-  | "updateOne"
-  | "delete"
-  | "softDelete"
-  | "restoreSoftDelete";
-
-export type PopulateItem<E = any> =
-  | LiteralUnion<keyof E>
-  | {
-      path: LiteralUnion<keyof E>;
-      select?: string;
-      model?: string;
-      populate?: PopulateItem<E>;
-    };
-
-export interface Context<E, M = any> {
-  query?: FilterQuery<E & { id: any; _id: any }>;
-  populates?: PopulateItem<E>[];
-  skip?: number;
-  limit?: number;
-  page?: number;
-  pageSize?: number;
-  sort?: string | { [x in keyof E]: 1 | -1 };
-  new?: boolean;
-  projection?: any;
-  session?: any;
-  select?: any;
-  meta?: M;
-  softDelete?: boolean; // build query for softDelete
-}
-
-export interface ContextCreate<E = any, M = any> extends Context<E, M> {
-  data?: E;
-}
-
-export interface ContextCreateMany<E = any, M = any> extends Context<E, M> {
-  data?: E[];
-}
-
-export interface ContextUpdate<E = any, M = any> extends Context<E, M> {
-  data?: UpdateQuery<E>;
-}
-
-/**************** DECORATOR ****************/
 export function Action(target: any, key: string, descriptor: any) {
   const caches = new Map();
   const originalMethod = descriptor.value;

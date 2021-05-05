@@ -5,6 +5,13 @@ import {
   Types,
 } from "mongoose";
 
+export const KEYS = {
+  SCHEMA_PATHS: "schema:paths",
+  SCHEMA_OPTIONS: "schema:options",
+  SCHEMA_VALIDATOR: "schema:validator",
+  REPOSITORY_HOOKS: "reposiory:hooks",
+};
+
 export function waterFallPromises(promises: any[]) {
   return promises.reduce(
     (prev: any, curr: any) => prev.then((prevResult: any) => curr(prevResult)),
