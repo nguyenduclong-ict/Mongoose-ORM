@@ -86,6 +86,7 @@ export function createSchema(classDefination: any) {
   _.set(schema, KEYS.SCHEMA_VALIDATOR, validatorSchema);
   _.set(schema, KEYS.SCHEMA_OPTIONS, options);
   _.set(schema, KEYS.SCHEMA_PATHS, fields);
+  _.set(schema, "classDefination", classDefination);
 
   return schema;
 }

@@ -91,6 +91,7 @@ function createSchema(classDefination) {
     lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_VALIDATOR, validatorSchema);
     lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_OPTIONS, options);
     lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_PATHS, fields);
+    lodash_1.default.set(schema, "classDefination", classDefination);
     return schema;
 }
 exports.createSchema = createSchema;
