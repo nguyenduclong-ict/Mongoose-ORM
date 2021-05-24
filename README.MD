@@ -17,7 +17,9 @@ src/services/entities/User.repository.ts
 
 ## DEMO
 
-## Mongoose-orm + Vuejs + Element UI [link](https://github.com/nguyenduclong-ict/demo-mongoose-orm)
+> [Mongoose-orm + Vuejs + Element UI](https://github.com/nguyenduclong-ict/demo-mongoose-orm)
+>
+> [class-validate](https://www.npmjs.com/package/class-validate)
 
 ![mongoose-orm](https://raw.githubusercontent.com/nguyenduclong-ict/demo-mongoose-orm/master/docs/1.png)
 ![mongoose-orm](https://raw.githubusercontent.com/nguyenduclong-ict/demo-mongoose-orm/master/docs/2.png)
