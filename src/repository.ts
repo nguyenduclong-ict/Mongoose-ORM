@@ -67,7 +67,7 @@ export function Action(target: any, key: string, descriptor: any) {
 
 export function Hook(
   trigger: "before" | "after",
-  actions: LiteralUnion<RespositoryBaseActions>[]
+  actions: LiteralUnion<RespositoryBaseActions>[] | RespositoryBaseActions
 ) {
   return function (target: any, key: any) {
     let hooks: any;
@@ -75,6 +75,7 @@ export function Hook(
       hooks = {};
       Reflect.defineMetadata(KEYS.REPOSITORY_HOOKS, hooks, target);
     }
+    if (!Array.isArray(actions)) actions = [actions];
     actions.forEach((actionName) => {
       hooks[target.constructor.name] = hooks[target.constructor.name] || {
         before: {},
@@ -137,7 +138,7 @@ export class Repository<E = any> {
 
   static registerHook(
     trigger: "before" | "after",
-    actions: string[],
+    actions: string[] | string,
     handler: (ctx: Context<any, any>) => any
   ) {
     let hooks: any;
@@ -146,6 +147,7 @@ export class Repository<E = any> {
       hooks = {};
       Reflect.defineMetadata(KEYS.REPOSITORY_HOOKS, hooks, target);
     }
+    if (!Array.isArray(actions)) actions = [actions];
     actions.forEach((actionName) => {
       hooks[target.constructor.name] = hooks[target.constructor.name] || {
         before: {},
@@ -186,7 +188,7 @@ export class Repository<E = any> {
     ]);
 
     return {
-      data: (data as unknown) as E[],
+      data: data as unknown as E[],
       page: Math.floor(ctx.skip / ctx.limit) + 1,
       totalPages: Math.ceil(counts / (ctx.limit || 10)),
       pageSize: ctx.limit,

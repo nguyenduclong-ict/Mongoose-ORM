@@ -33,6 +33,7 @@
     "@types/lodash": "^4.14.166",
     "@types/mongoose": "^5.10.3",
     "async-validator": "^3.5.1",
+    "class-validate": "^0.0.1",
     "commander": "^6.2.1",
     "ejs": "^3.1.5",
     "lodash": "^4.17.20",

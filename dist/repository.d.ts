@@ -3,7 +3,7 @@ import { Connection, Document, Model, Schema } from "mongoose";
 import "reflect-metadata";
 import { Context, ContextCreate, ContextCreateMany, ContextUpdate, LiteralUnion, PopulateItem, RespositoryBaseActions } from "./declaration";
 export declare function Action(target: any, key: string, descriptor: any): void;
-export declare function Hook(trigger: "before" | "after", actions: LiteralUnion<RespositoryBaseActions>[]): (target: any, key: any) => void;
+export declare function Hook(trigger: "before" | "after", actions: LiteralUnion<RespositoryBaseActions>[] | RespositoryBaseActions): (target: any, key: any) => void;
 export declare function resgisterRepository(repository: Repository, connection?: Connection): void;
 export declare function getRepository(connection: Connection, name: string): Repository<any>;
 export declare function getRepositories(connection: Connection): {
@@ -17,7 +17,7 @@ export declare class Repository<E = any> {
     model: Model<Document<E>>;
     constructor(connection?: any);
     static get globalInstance(): Repository<any>;
-    static registerHook(trigger: "before" | "after", actions: string[], handler: (ctx: Context<any, any>) => any): void;
+    static registerHook(trigger: "before" | "after", actions: string[] | string, handler: (ctx: Context<any, any>) => any): void;
     makeDefaultContext(ctx: Context<E>): void;
     list(ctx: Context<E>): Promise<{
         data: E[];

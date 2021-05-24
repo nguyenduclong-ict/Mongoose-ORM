@@ -15,6 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getSchemaValidation = exports.createSchema = exports.DeleteDateField = exports.Field = exports.Entity = void 0;
+var class_validate_1 = require("class-validate");
 var lodash_1 = __importDefault(require("lodash"));
 var mongoose_1 = require("mongoose");
 require("reflect-metadata");
@@ -71,7 +72,23 @@ function createSchema(classDefination) {
             schema.index(indexSetting.fields, indexSetting.options);
         });
     }
-    lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_VALIDATOR, getSchemaValidation(classDefination));
+    var validatorSchema = getSchemaValidation(classDefination);
+    var vs2 = class_validate_1.getValidateDescriptor(classDefination);
+    Object.keys(vs2).forEach(function (key) {
+        var _a;
+        var override = Reflect.getMetadata("override:validate#" + key, classDefination);
+        if (override) {
+            validatorSchema[key] = vs2[key];
+        }
+        else {
+            validatorSchema[key] = validatorSchema[key] || [];
+            if (!Array.isArray(key)) {
+                validatorSchema[key] = [validatorSchema[key]];
+            }
+            (_a = validatorSchema[key]).push.apply(_a, vs2[key]);
+        }
+    });
+    lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_VALIDATOR, validatorSchema);
     lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_OPTIONS, options);
     lodash_1.default.set(schema, utils_1.KEYS.SCHEMA_PATHS, fields);
     return schema;
@@ -81,68 +98,75 @@ function getSchemaValidation(classDefination) {
     var validateSchema = {};
     var fields = Reflect.getMetadata(utils_1.KEYS.SCHEMA_PATHS, classDefination);
     Object.keys(fields).forEach(function (path) {
+        var _a;
+        var rules = [];
         var fieldOption = fields[path];
         var isArray = Array.isArray(fieldOption);
         if (isArray)
             fieldOption = fieldOption[0];
-        if (fieldOption.validator) {
-            validateSchema[path] = fieldOption.validator;
+        var name = fieldOption.name || path;
+        if (fieldOption.required) {
+            rules.push({
+                required: true,
+                message: name + " is required",
+            });
         }
-        else {
-            var rule_1 = {};
-            rule_1.required = fieldOption.required;
-            // Type
-            if (fieldOption.type === mongoose_1.SchemaTypes.String ||
-                fieldOption.type === String) {
-                rule_1.type = "string";
-                if (lodash_1.default.has(fieldOption, "length"))
-                    rule_1.len = fieldOption.length;
-                if (lodash_1.default.has(fieldOption, "minlength"))
-                    rule_1.min = fieldOption.minlength;
-                if (lodash_1.default.has(fieldOption, "maxlength"))
-                    rule_1.max = fieldOption.maxlength;
-            }
-            else if (isArray ||
-                fieldOption.type === mongoose_1.SchemaTypes.Array ||
-                fieldOption.type === Array ||
-                Array.isArray(fieldOption.type)) {
-                rule_1.type = "array";
-                if (lodash_1.default.has(fieldOption, "length"))
-                    rule_1.len = fieldOption.length;
-                if (lodash_1.default.has(fieldOption, "minlength"))
-                    rule_1.min = fieldOption.minlength;
-                if (lodash_1.default.has(fieldOption, "maxlength"))
-                    rule_1.max = fieldOption.maxlength;
-            }
-            else if (fieldOption.type === mongoose_1.SchemaTypes.Number ||
-                fieldOption.type === Number) {
-                rule_1.type = "number";
-                if (lodash_1.default.has(fieldOption, "max"))
-                    rule_1.max = fieldOption.max;
-                if (lodash_1.default.has(fieldOption, "min"))
-                    rule_1.min = fieldOption.min;
-            }
-            else if (fieldOption.type === mongoose_1.SchemaTypes.Boolean ||
-                fieldOption.type === Boolean) {
-                rule_1.type = "boolean";
-            }
-            else if (fieldOption.type === mongoose_1.SchemaTypes.ObjectId) {
-                rule_1.type = "any";
-                rule_1.validator = function (r, v, cb) {
-                    if (rule_1.required && !v) {
-                        return cb(r.fullField + " must be ObjectId");
-                    }
-                    if (!mongoose_1.isValidObjectId(v))
-                        return cb(r.fullField + " must be ObjectId");
-                    cb();
-                };
-            }
-            if (lodash_1.default.has(fieldOption, "enum"))
-                rule_1.enum = fieldOption.enum;
-            if (rule_1.type) {
-                validateSchema[path] = rule_1;
-            }
+        if (fieldOption.type === mongoose_1.SchemaTypes.String ||
+            fieldOption.type === String) {
+            var rule = {};
+            rule.type = "string";
+            if (lodash_1.default.has(fieldOption, "length"))
+                rule.len = fieldOption.length;
+            if (lodash_1.default.has(fieldOption, "minlength"))
+                rule.min = fieldOption.minlength;
+            if (lodash_1.default.has(fieldOption, "maxlength"))
+                rule.max = fieldOption.maxlength;
+            rules.push(rule);
         }
+        else if (isArray ||
+            fieldOption.type === mongoose_1.SchemaTypes.Array ||
+            fieldOption.type === Array ||
+            Array.isArray(fieldOption.type)) {
+            var rule = {};
+            rule.type = "array";
+            if (lodash_1.default.has(fieldOption, "length"))
+                rule.len = fieldOption.length;
+            if (lodash_1.default.has(fieldOption, "minlength"))
+                rule.min = fieldOption.minlength;
+            if (lodash_1.default.has(fieldOption, "maxlength"))
+                rule.max = fieldOption.maxlength;
+        }
+        else if (fieldOption.type === mongoose_1.SchemaTypes.Number ||
+            fieldOption.type === Number) {
+            var rule = {};
+            rule.type = "number";
+            if (lodash_1.default.has(fieldOption, "max"))
+                rule.max = fieldOption.max;
+            if (lodash_1.default.has(fieldOption, "min"))
+                rule.min = fieldOption.min;
+            rules.push(rule);
+        }
+        else if (fieldOption.type === mongoose_1.SchemaTypes.Boolean ||
+            fieldOption.type === Boolean) {
+            rules.push({
+                type: "boolean",
+            });
+        }
+        else if (((_a = fieldOption.type) === null || _a === void 0 ? void 0 : _a.schemaName) === "ObjectId") {
+            rules.push({
+                type: "any",
+                pattern: /^[a-fd]{24}$/i,
+                patternObject: ["^[a-fd]{24}$", "i"],
+                message: name + " must be ObjectId",
+            });
+        }
+        if (lodash_1.default.has(fieldOption, "enum")) {
+            rules.push({
+                enum: fieldOption.enum,
+                message: name + " must be in " + fieldOption.enum.join(", "),
+            });
+        }
+        validateSchema[path] = rules;
     });
     return validateSchema;
 }
