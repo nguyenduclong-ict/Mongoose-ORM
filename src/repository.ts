@@ -164,8 +164,6 @@ export class Repository<E = any> {
     ctx = ctx || {};
     ctx.meta = ctx.meta ?? {};
     ctx.query = ctx.query ?? {};
-    ctx.limit = ctx.limit ?? ctx.pageSize ?? 10;
-    ctx.skip = ctx.skip ?? ctx.page ? (ctx.page - 1) * ctx.limit : 0;
     ctx.new = ctx.new ?? true;
     ctx.softDelete = ctx.softDelete ?? true;
   }
@@ -174,11 +172,13 @@ export class Repository<E = any> {
   @Action
   async list(ctx: Context<E>) {
     this.buildQuery(ctx);
-    const queryBuilder = this.model.find(
-      ctx.query,
-      ctx.projection,
-      _.pick(ctx, ["skip", "limit", "sort", "session"])
-    );
+    const limit = ctx.pageSize || 10;
+    const skip = ((ctx.page || 1) - 1) * limit;
+    const queryBuilder = this.model.find(ctx.query, ctx.projection, {
+      ..._.pick(ctx, ["sort", "session"]),
+      limit,
+      skip,
+    });
     if (ctx.populates) {
       this.populate(queryBuilder, ctx.populates);
     }

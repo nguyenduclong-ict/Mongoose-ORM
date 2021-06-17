@@ -240,24 +240,25 @@ var Repository = /** @class */ (function () {
         });
     };
     Repository.prototype.makeDefaultContext = function (ctx) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d;
         ctx = ctx || {};
         ctx.meta = (_a = ctx.meta) !== null && _a !== void 0 ? _a : {};
         ctx.query = (_b = ctx.query) !== null && _b !== void 0 ? _b : {};
-        ctx.limit = (_d = (_c = ctx.limit) !== null && _c !== void 0 ? _c : ctx.pageSize) !== null && _d !== void 0 ? _d : 10;
-        ctx.skip = ((_e = ctx.skip) !== null && _e !== void 0 ? _e : ctx.page) ? (ctx.page - 1) * ctx.limit : 0;
-        ctx.new = (_f = ctx.new) !== null && _f !== void 0 ? _f : true;
-        ctx.softDelete = (_g = ctx.softDelete) !== null && _g !== void 0 ? _g : true;
+        ctx.new = (_c = ctx.new) !== null && _c !== void 0 ? _c : true;
+        ctx.softDelete = (_d = ctx.softDelete) !== null && _d !== void 0 ? _d : true;
     };
     // *** Default Action ***
     Repository.prototype.list = function (ctx) {
         return __awaiter(this, void 0, void 0, function () {
-            var queryBuilder, _a, data, counts;
+            var limit, skip, queryBuilder, _a, data, counts;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         this.buildQuery(ctx);
-                        queryBuilder = this.model.find(ctx.query, ctx.projection, lodash_1.default.pick(ctx, ["skip", "limit", "sort", "session"]));
+                        limit = ctx.pageSize || 10;
+                        skip = ((ctx.page || 1) - 1) * limit;
+                        queryBuilder = this.model.find(ctx.query, ctx.projection, __assign(__assign({}, lodash_1.default.pick(ctx, ["sort", "session"])), { limit: limit,
+                            skip: skip }));
                         if (ctx.populates) {
                             this.populate(queryBuilder, ctx.populates);
                         }
